@@ -55,6 +55,26 @@
         </dependency>
     </dependencies>
 
+    <!-- Repositories -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>logstash-repo</id>
+            <url>https://dl.bintray.com/logstash/maven</url>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/snapshot</url>
+        </repository>
+    </repositories>
+
     <!-- Build Configuration -->
     <build>
         <plugins>
