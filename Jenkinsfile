@@ -17,13 +17,12 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-<<<<<<< HEAD
-                sh 'mvn clean package'
-=======
+
+
                 dir('project') {  // Change to the directory containing pom.xml
                     sh 'mvn clean package'
                 }
->>>>>>> cdbc584 (add)
+
             }
         }
 
