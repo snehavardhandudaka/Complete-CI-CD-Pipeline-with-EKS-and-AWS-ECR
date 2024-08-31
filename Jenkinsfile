@@ -19,7 +19,7 @@ pipeline {
             steps {
 
 
-                dir('project') {  // Change to the directory containing pom.xml
+                dir('pom.xml') {  // Change to the directory containing pom.xml
                     sh 'mvn clean package'
                 }
 
