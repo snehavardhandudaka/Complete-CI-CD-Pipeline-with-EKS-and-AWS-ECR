@@ -17,7 +17,13 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
+<<<<<<< HEAD
                 sh 'mvn clean package'
+=======
+                dir('project') {  // Change to the directory containing pom.xml
+                    sh 'mvn clean package'
+                }
+>>>>>>> cdbc584 (add)
             }
         }
 
@@ -48,10 +54,13 @@ pipeline {
                     // Configure kubectl to use the EKS cluster
                     sh '''
                     aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
+<<<<<<< HEAD
                     '''
 
                     // Apply the deployment.yaml to the EKS cluster
                     sh '''
+=======
+>>>>>>> cdbc584 (add)
                     kubectl apply -f k8s/deployment.yaml
                     kubectl rollout status deployment/my-app
                     '''
