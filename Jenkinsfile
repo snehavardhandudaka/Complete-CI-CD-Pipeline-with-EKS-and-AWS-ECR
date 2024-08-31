@@ -84,4 +84,13 @@ pipeline {
             echo 'Pipeline failed.'
         }
     }
+stage('Verify Files') {
+    steps {
+        sh 'ls -la'
+    }
 }
+
+
+}
+
+
