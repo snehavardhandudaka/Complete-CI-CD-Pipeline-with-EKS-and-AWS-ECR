@@ -19,12 +19,7 @@ pipeline {
             }
         }
 
-        stage('Fix Permissions') {
-            steps {
-                sh 'chown jenkins:jenkins pom.xml' // Ensure correct ownership
-                sh 'ls -la' // Verify permissions after fixing
-            }
-        }
+        
 
         stage('Build Maven Project') {
             steps {
