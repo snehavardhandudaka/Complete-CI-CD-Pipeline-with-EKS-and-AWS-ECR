@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.6.3' // Name of the Maven installation in Jenkins
+    }
+
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
@@ -10,14 +14,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git repository
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
             }
         }
 
         stage('Build Maven Project') {
             steps {
-                // Run Maven build (assuming pom.xml is at the root of the project)
                 sh 'mvn clean install'
             }
         }
@@ -25,7 +27,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image with a tag
                     dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}")
                 }
             }
@@ -34,8 +35,7 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    // Authenticate with AWS ECR and push the Docker image
-                    docker.withRegistry("https://${env.ECR_REPO}", 'aws') {
+                    docker.withRegistry("https://${env.ECR_REPO}", 'jenkins_user') {
                         dockerImage.push("${env.IMAGE_TAG}")
                         dockerImage.push("latest") // Optionally push the 'latest' tag
                     }
@@ -46,13 +46,8 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 script {
-                    // Configure kubectl to use the EKS cluster
                     sh '''
                     aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
-                    '''
-
-                    // Apply the deployment.yaml to the EKS cluster
-                    sh '''
                     kubectl apply -f k8s/deployment.yaml
                     kubectl rollout status deployment/my-app
                     '''
@@ -63,7 +58,6 @@ pipeline {
         stage('Commit Version Update') {
             steps {
                 script {
-                    // Commit version updates to the Git repository
                     sh '''
                     git config user.email "jenkins@example.com"
                     git config user.name "Jenkins"
