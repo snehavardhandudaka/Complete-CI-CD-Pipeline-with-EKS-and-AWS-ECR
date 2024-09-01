@@ -20,7 +20,7 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') { // Adjust this path if your pom.xml is not at the root
+                 { // Adjust this path if your pom.xml is not at the root
                     sh 'mvn clean install'
                 }
             }
