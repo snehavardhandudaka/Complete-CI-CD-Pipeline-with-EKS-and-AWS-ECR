@@ -15,6 +15,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                sh 'ls -la' // Debugging: Check files after checkout
+            }
+        }
+
+        stage('Fix Permissions') {
+            steps {
+                sh 'chown jenkins:jenkins pom.xml' // Ensure correct ownership
+                sh 'ls -la' // Verify permissions after fixing
             }
         }
 
