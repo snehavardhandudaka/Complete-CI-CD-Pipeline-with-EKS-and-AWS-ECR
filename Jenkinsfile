@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven 3.6.3' // Name of the Maven installation in Jenkins
-    }
-
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
@@ -28,6 +24,16 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Authenticate Docker to AWS ECR') {
+            steps {
+                script {
+                    sh '''
+                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                    '''
                 }
             }
         }
