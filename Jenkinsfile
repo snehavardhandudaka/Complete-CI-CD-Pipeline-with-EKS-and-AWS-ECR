@@ -18,6 +18,7 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
+                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/pom.xml')
                 sh 'mvn clean install'
             }
         }
