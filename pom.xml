@@ -34,16 +34,16 @@
 
         <!-- MySQL Connector for database interaction -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
 
         <!-- Logging -->
         <dependency>
-            <groupId>net.logstash</groupId>
+            <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.3</version>
+            <version>7.2</version> <!-- Use a version that exists in the repository -->
         </dependency>
 
         <!-- Testing -->
@@ -63,7 +63,7 @@
         </repository>
         <repository>
             <id>logstash-repo</id>
-            <url>https://dl.bintray.com/logstash/maven</url>
+            <url>https://repo1.maven.org/maven2/</url> <!-- Central Maven Repository -->
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -99,3 +99,4 @@
     </build>
 
 </project>
+
