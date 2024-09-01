@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+  tools {
+        maven 'Maven 3.8.7' // Name of the Maven installation in Jenkins
+    }
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
