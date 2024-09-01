@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven 3.8.7' // Name of the Maven installation in Jenkins
+        git 'Default Git' // Name of the Git installation in Jenkins
     }
 
     environment {
@@ -20,7 +21,9 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                sh 'mvn clean install' // Remove extra curly braces
+                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') { // Navigate to the directory containing pom.xml
+                    sh 'mvn clean install'
+                }
             }
         }
 
