@@ -19,7 +19,7 @@ pipeline {
             steps {
                 // Run Maven build (assuming pom.xml is at the root of the project)
                 def pomPath = '/var/lib/jenkins/workspace/java-app-pipeline'
-                sh 'mvn clean package'
+                sh 'mvn clean install'
             }
         }
 
