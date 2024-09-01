@@ -14,15 +14,27 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Checkout the code from GitHub
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                sh 'ls -la' // Debugging: Check files after checkout
+                
+                // Verify the directory contents
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline'
             }
         }
 
-        
+        stage('Verify Files') {
+            steps {
+                // List directory contents to verify presence of pom.xml
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline'
+            }
+        }
+
         stage('Build Maven Project') {
             steps {
-                sh 'mvn clean install'
+                // Ensure Maven runs in the directory with the pom.xml file
+                dir('/var/lib/jenkins/workspace/java-app-pipeline') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
@@ -78,12 +90,6 @@ pipeline {
                     git push origin main
                     '''
                 }
-            }
-        }
-
-        stage('Verify Files') {
-            steps {
-                sh 'ls -la'
             }
         }
     }
