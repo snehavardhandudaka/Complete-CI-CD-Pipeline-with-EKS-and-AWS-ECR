@@ -20,7 +20,7 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') { // Navigate to the directory containing pom.xml
+                {// Navigate to the directory containing pom.xml
                     sh 'mvn clean install'
                 }
             }
