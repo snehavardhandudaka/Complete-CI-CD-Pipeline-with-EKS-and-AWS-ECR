@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         maven 'Maven 3.8.7' // Name of the Maven installation in Jenkins
-        git 'Default Git' // Name of the Git installation in Jenkins
     }
 
     environment {
