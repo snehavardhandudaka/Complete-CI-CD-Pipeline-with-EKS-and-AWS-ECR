@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Authenticate with AWS ECR and push the Docker image
-                    docker.withRegistry("https://${env.ECR_REPO}", 'jenkins_user') {
+                    docker.withRegistry("https://${env.ECR_REPO}", 'aws') {
                         dockerImage.push("${env.IMAGE_TAG}")
                         dockerImage.push("latest") // Optionally push the 'latest' tag
                     }
