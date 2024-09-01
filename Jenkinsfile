@@ -20,9 +20,7 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                 { // Adjust this path if your pom.xml is not at the root
-                    sh 'mvn clean install'
-                }
+                sh 'mvn clean install' // Remove extra curly braces
             }
         }
 
