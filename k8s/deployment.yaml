@@ -1,20 +1,17 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: my-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      containers:
-      - name: my-app
-        image: 761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo:${IMAGE_TAG}
-        ports:
-        - containerPort: 8080
-
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::761018874575:role/eksctl-my-eks-cluster-nodegroup-NodeInstanceRole-12345678
+      username: my-eks-cluster-node
+      groups:
+        - system:bootstrappers
+        - system:nodes
+  mapUsers: |
+    - userarn: arn:aws:iam::761018874575:user/jenkins-user
+      username: jenkins-user
+      groups:
+        - system:masters
