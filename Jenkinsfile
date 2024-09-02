@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         AWS_REGION = 'us-east-2'
-        ECR_REPO_URI = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
+        ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
         IMAGE_TAG = "${env.BUILD_ID}" // Tag for the Docker image
     }
 
@@ -46,8 +46,15 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image and tag it
-                    dockerImage = docker.build("${env.ECR_REPO_URI}:${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
+                    dockerImage = docker.build("${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh "docker tag ${env.IMAGE_TAG} ${env.ECR_REPO}:${env.IMAGE_TAG}"
                 }
             }
         }
@@ -56,7 +63,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI}
+                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
                     '''
                 }
             }
@@ -65,11 +72,10 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    // Push Docker image to ECR
-                    docker.withRegistry("https://${env.ECR_REPO_URI}", 'jenkins-aws-credentials') {
-                        dockerImage.push("${env.IMAGE_TAG}")
-                        dockerImage.push("latest") // Optionally push the 'latest' tag
-                    }
+                    sh '''
+                    docker push ${ECR_REPO}:${IMAGE_TAG}
+                    docker push ${ECR_REPO}:latest
+                    '''
                 }
             }
         }
