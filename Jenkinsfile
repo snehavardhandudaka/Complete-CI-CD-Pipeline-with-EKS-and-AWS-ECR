@@ -32,9 +32,7 @@ pipeline {
         stage('Build Maven Project') {
             steps {
                 // Ensure Maven runs in the directory with the pom.xml file
-                 {
-                    sh 'mvn clean install'
-                }
+                sh 'mvn clean install'
             }
         }
 
