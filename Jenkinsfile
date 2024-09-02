@@ -58,17 +58,17 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     script {
                         sh '''
-                        # Print AWS CLI version for debugging
+                        echo "AWS CLI version:"
                         aws --version
 
-                        # Print Docker version for debugging
+                        echo "Docker version:"
                         docker --version
 
-                        # Print the login password to verify the command
+                        echo "Fetching ECR login password:"
                         aws ecr get-login-password --region ${AWS_REGION} > /tmp/ecr-password.txt
                         cat /tmp/ecr-password.txt
 
-                        # Authenticate Docker to AWS ECR
+                        echo "Authenticating Docker to AWS ECR:"
                         cat /tmp/ecr-password.txt | docker login --username AWS --password-stdin ${ECR_REPO}
                         '''
                     }
@@ -91,8 +91,13 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    echo "Updating kubeconfig for EKS cluster:"
                     aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
+
+                    echo "Applying Kubernetes deployment:"
                     kubectl apply -f k8s/deployment.yaml
+
+                    echo "Checking rollout status:"
                     kubectl rollout status deployment/my-app
                     '''
                 }
