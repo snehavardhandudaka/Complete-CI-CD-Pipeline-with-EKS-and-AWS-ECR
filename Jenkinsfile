@@ -18,21 +18,21 @@ pipeline {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
                 
                 // Verify the directory contents
-                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline'
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'
             }
         }
 
         stage('Verify Files') {
             steps {
                 // List directory contents to verify presence of pom.xml
-                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline'
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'
             }
         }
 
         stage('Build Maven Project') {
             steps {
                 // Ensure Maven runs in the directory with the pom.xml file
-                sh 'mvn -f /var/lib/jenkins/workspace/java-app-pipeline/pom.xml clean install'
+                sh 'mvn -f /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/pom.xml clean install'
             }
         }
 
