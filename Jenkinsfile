@@ -88,7 +88,7 @@ pipeline {
                 script {
                     sh '''
                     git config user.email "snehavardhan1996@gmail.com"
-                    git config user.name "Jenkins"
+                    git config user.name "snehavardhandudaka"
                     git add .
                     git commit -m "Automated version update to ${IMAGE_TAG}"
                     git push origin main
