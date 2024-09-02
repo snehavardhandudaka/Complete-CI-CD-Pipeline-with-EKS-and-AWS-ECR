@@ -2,36 +2,31 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.7' // Name of the Maven installation in Jenkins
+        maven 'Maven 3.8.7'
     }
 
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
-        IMAGE_TAG = "${env.BUILD_ID}" // Tag for the Docker image
+        IMAGE_TAG = "${env.BUILD_ID}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from GitHub
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                
-                // Verify the directory contents
                 sh 'ls -la'
             }
         }
 
         stage('Verify Files') {
             steps {
-                // List directory contents to verify presence of pom.xml and Dockerfile
                 sh 'ls -la'
             }
         }
 
         stage('Pre-clean Workspace') {
             steps {
-                // Manually clean the target directory to avoid issues with Maven's clean phase
                 sh 'rm -rf target'
             }
         }
@@ -39,7 +34,6 @@ pipeline {
         stage('Build Maven Project') {
             steps {
                 dir('/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
-                    // Ensure Maven runs in the directory with the pom.xml file
                     sh 'mvn clean install'
                 }
             }
@@ -65,14 +59,10 @@ pipeline {
                         docker --version
 
                         echo "Fetching ECR login password:"
-                        aws ecr get-login-password --region ${AWS_REGION} > /tmp/ecr-password.txt
-                        cat /tmp/ecr-password.txt
+                        PASSWORD=$(aws ecr get-login-password --region ${AWS_REGION})
 
-                        echo "Authenticating Docker to AWS ECR:"
-                        cat /tmp/ecr-password.txt | docker login --username AWS --password-stdin ${ECR_REPO}
-                        
-                        echo "Docker login result:"
-                        docker info
+                        echo "Docker login with ECR:"
+                        echo $PASSWORD | docker login --username AWS --password-stdin ${ECR_REPO}
                         '''
                     }
                 }
@@ -85,7 +75,7 @@ pipeline {
                     docker.withRegistry("https://${env.ECR_REPO}", 'aws-credentials-id') {
                         echo "Pushing Docker image to ECR"
                         dockerImage.push("${env.IMAGE_TAG}")
-                        dockerImage.push("latest") // Optionally push the 'latest' tag
+                        dockerImage.push("latest")
                     }
                 }
             }
