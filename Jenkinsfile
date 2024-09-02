@@ -50,17 +50,15 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') {
-                        echo "Pushing Docker image to ECR"
-                        sh 'docker images' // Print Docker images
-                        try {
-                            dockerImage.push("${IMAGE_TAG}")
-                            dockerImage.push("latest")
-                        } catch (Exception e) {
-                            echo "Failed to push Docker image: ${e.message}"
-                            error("Push to ECR failed")
-                        }
-                    }
+                    sh '''
+                    echo "Tagging Docker image:"
+                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:${IMAGE_TAG}
+                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:latest
+
+                    echo "Pushing Docker image to ECR:"
+                    docker push ${ECR_REPO}:${IMAGE_TAG}
+                    docker push ${ECR_REPO}:latest
+                    '''
                 }
             }
         }
@@ -88,7 +86,7 @@ pipeline {
                 script {
                     sh '''
                     git config user.email "snehavardhan1996@gmail.com"
-                    git config user.name "snehavardhandudaka"
+                    git config user.name "Jenkins"
                     git add .
                     git commit -m "Automated version update to ${IMAGE_TAG}"
                     git push origin main
