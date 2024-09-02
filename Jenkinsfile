@@ -29,20 +29,6 @@ pipeline {
             }
         }
 
-        stage('Change Permissions') {
-            steps {
-                // Change permissions of the target directory
-                sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/target'
-            }
-        }
-
-        stage('Clean Target Directory') {
-            steps {
-                // Manually delete the target directory to avoid locked file issues
-                sh 'sudo rm -rf /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/target'
-            }
-        }
-
         stage('Build Maven Project') {
             steps {
                 // Ensure Maven runs in the directory with the pom.xml file
