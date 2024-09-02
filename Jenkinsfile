@@ -72,7 +72,7 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${env.ECR_REPO}", 'aws-credentials-id') {
+                    docker.withRegistry("https://${env.ECR_REPO}", 'AWS Credentials') {
                         echo "Pushing Docker image to ECR"
                         dockerImage.push("${env.IMAGE_TAG}")
                         dockerImage.push("latest")
