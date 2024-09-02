@@ -58,7 +58,18 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     script {
                         sh '''
-                        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                        # Print AWS CLI version for debugging
+                        aws --version
+
+                        # Print Docker version for debugging
+                        docker --version
+
+                        # Print the login password to verify the command
+                        aws ecr get-login-password --region ${AWS_REGION} > /tmp/ecr-password.txt
+                        cat /tmp/ecr-password.txt
+
+                        # Authenticate Docker to AWS ECR
+                        cat /tmp/ecr-password.txt | docker login --username AWS --password-stdin ${ECR_REPO}
                         '''
                     }
                 }
