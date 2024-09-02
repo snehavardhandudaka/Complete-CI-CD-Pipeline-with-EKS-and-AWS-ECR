@@ -1,15 +1,53 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.8.7' // Name of the Maven installation in Jenkins
+    }
+
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
+        IMAGE_TAG = "${env.BUILD_ID}" // Tag for the Docker image
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git'
+                // Checkout the code from GitHub
+                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                
+                // Verify the directory contents
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'
+            }
+        }
+
+        stage('Verify Files') {
+            steps {
+                // List directory contents to verify presence of pom.xml and Dockerfile
+                sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'
+            }
+        }
+
+        stage('Pre-clean Workspace') {
+            steps {
+                // Manually clean the target directory to avoid issues with Maven's clean phase
+                sh 'rm -rf /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/target'
+            }
+        }
+
+        stage('Build Maven Project') {
+            steps {
+                // Ensure Maven runs in the directory with the pom.xml file
+                sh 'mvn -f /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/pom.xml clean install'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
+                }
             }
         }
 
@@ -17,59 +55,58 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     script {
-                        try {
-                            // Debug output
-                            sh 'aws --version'
-                            sh 'aws sts get-caller-identity'
-
-                            // Authenticate Docker
-                            sh '''
-                            echo "Attempting to authenticate Docker to AWS ECR..."
-                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
-                            '''
-                            
-                            echo "Docker login succeeded."
-                        } catch (Exception e) {
-                            echo "Docker login failed: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                            throw e
-                        }
+                        sh '''
+                        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                        '''
                     }
                 }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Push to AWS ECR') {
             steps {
                 script {
-                    try {
-                        echo "Building Docker image..."
-                        sh 'docker build -t my-java-app-repo:latest .'
-                        echo "Docker image build succeeded."
-                    } catch (Exception e) {
-                        echo "Docker image build failed: ${e.message}"
-                        currentBuild.result = 'FAILURE'
-                        throw e
+                    docker.withRegistry("https://${env.ECR_REPO}", 'aws-credentials-id') {
+                        dockerImage.push("${env.IMAGE_TAG}")
+                        dockerImage.push("latest") // Optionally push the 'latest' tag
                     }
                 }
             }
         }
 
-        stage('Push Docker Image to ECR') {
+        stage('Deploy to EKS') {
             steps {
                 script {
-                    try {
-                        echo "Pushing Docker image to AWS ECR..."
-                        sh 'docker tag my-java-app-repo:latest ${ECR_REPO}:latest'
-                        sh 'docker push ${ECR_REPO}:latest'
-                        echo "Docker image push succeeded."
-                    } catch (Exception e) {
-                        echo "Docker image push failed: ${e.message}"
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh '''
+                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl rollout status deployment/my-app
+                    '''
                 }
             }
+        }
+
+        stage('Commit Version Update') {
+            steps {
+                script {
+                    sh '''
+                    git config user.email "jenkins@example.com"
+                    git config user.name "Jenkins"
+                    git add .
+                    git commit -m "Automated version update to ${IMAGE_TAG}"
+                    git push origin main
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
