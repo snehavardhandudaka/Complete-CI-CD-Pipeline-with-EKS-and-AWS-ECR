@@ -65,18 +65,20 @@ pipeline {
 
         stage('Deploy to EKS') {
             steps {
-                script {
-                    sh '''
-                    set -e
-                    echo "Updating kubeconfig for EKS cluster:"
-                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) {
+                    script {
+                        sh '''
+                        set -e
+                        echo "Updating kubeconfig for EKS cluster:"
+                        aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
-                    echo "Applying Kubernetes deployment:"
-                    kubectl apply -f k8s/deployment.yaml
+                        echo "Applying Kubernetes deployment:"
+                        kubectl apply -f k8s/deployment.yaml
 
-                    echo "Checking rollout status:"
-                    kubectl rollout status deployment/my-app
-                    '''
+                        echo "Checking rollout status:"
+                        kubectl rollout status deployment/my-app
+                        '''
+                    }
                 }
             }
         }
