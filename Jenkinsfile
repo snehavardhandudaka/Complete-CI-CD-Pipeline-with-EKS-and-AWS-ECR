@@ -50,7 +50,7 @@ pipeline {
 
         stage('Authenticate Docker to AWS ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) { // AWS credentials ID
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) { // AWS credentials ID
                     script {
                         sh '''
                         echo "Fetching ECR login password:"
@@ -68,7 +68,7 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REPO}", 'aws-credentials-id') { // Use AWS credentials for Docker registry
+                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') { // Use AWS credentials for Docker registry
                         echo "Pushing Docker image to ECR"
                         dockerImage.push("${IMAGE_TAG}") // Push the Docker image with the build ID tag
                         dockerImage.push("latest") // Push the Docker image with the latest tag
