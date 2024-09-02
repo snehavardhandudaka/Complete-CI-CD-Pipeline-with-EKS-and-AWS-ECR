@@ -70,6 +70,9 @@ pipeline {
 
                         echo "Authenticating Docker to AWS ECR:"
                         cat /tmp/ecr-password.txt | docker login --username AWS --password-stdin ${ECR_REPO}
+                        
+                        echo "Docker login result:"
+                        docker info
                         '''
                     }
                 }
@@ -80,6 +83,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://${env.ECR_REPO}", 'aws-credentials-id') {
+                        echo "Pushing Docker image to ECR"
                         dockerImage.push("${env.IMAGE_TAG}")
                         dockerImage.push("latest") // Optionally push the 'latest' tag
                     }
@@ -124,7 +128,7 @@ pipeline {
             echo 'Pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'Pipeline failed. Please check the detailed logs above for more information.'
         }
     }
 }
