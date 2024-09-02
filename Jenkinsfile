@@ -49,7 +49,7 @@ pipeline {
 
         stage('Authenticate Docker to AWS ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws credentials']]) {
                     script {
                         sh '''
                         echo "AWS CLI version:"
