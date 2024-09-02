@@ -59,10 +59,7 @@ pipeline {
                         docker --version
 
                         echo "Fetching ECR login password:"
-                        PASSWORD=$(aws ecr get-login-password --region ${AWS_REGION})
-
-                        echo "Docker login with ECR:"
-                        echo $PASSWORD | docker login --username AWS --password-stdin ${ECR_REPO}
+                        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
                         '''
                     }
                 }
