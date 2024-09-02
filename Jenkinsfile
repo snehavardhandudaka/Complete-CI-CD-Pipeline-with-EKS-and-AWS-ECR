@@ -33,7 +33,7 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                dir('/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
+                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
                     sh 'mvn clean install'
                 }
             }
@@ -42,7 +42,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
+                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
                 }
             }
         }
