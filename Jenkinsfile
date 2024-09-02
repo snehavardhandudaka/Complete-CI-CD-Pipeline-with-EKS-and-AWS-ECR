@@ -6,15 +6,15 @@ pipeline {
     }
 
     environment {
-        AWS_REGION = 'us-east-2'
-        ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
+        AWS_REGION = 'us-east-2' // Update with your AWS region
+        ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo' // Update with your ECR repository URI
         IMAGE_TAG = "${env.BUILD_ID}" // Use Jenkins build ID for tagging
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id' // Update with your Git credentials ID
                 sh 'ls -la'
             }
         }
@@ -43,17 +43,22 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
+                    echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
         }
 
         stage('Authenticate Docker to AWS ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) { // Update with your AWS credentials ID
                     script {
                         sh '''
                         echo "Fetching ECR login password:"
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                        if [ $? -ne 0 ]; then
+                            echo "Docker login to ECR failed"
+                            exit 1
+                        fi
                         '''
                     }
                 }
@@ -63,7 +68,7 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') {
+                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') { // Update with your AWS credentials ID
                         echo "Pushing Docker image to ECR"
                         dockerImage.push("${IMAGE_TAG}")
                         dockerImage.push("latest")
@@ -77,7 +82,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Updating kubeconfig for EKS cluster:"
-                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
+                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster // Update with your EKS cluster name
 
                     echo "Applying Kubernetes deployment:"
                     kubectl apply -f k8s/deployment.yaml
