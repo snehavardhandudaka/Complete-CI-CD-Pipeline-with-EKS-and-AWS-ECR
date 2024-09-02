@@ -46,25 +46,19 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
-                }
-            }
-        }
-
-        stage('Tag Docker Image') {
-            steps {
-                script {
-                    sh "docker tag ${env.IMAGE_TAG} ${env.ECR_REPO}:${env.IMAGE_TAG}"
+                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
                 }
             }
         }
 
         stage('Authenticate Docker to AWS ECR') {
             steps {
-                script {
-                    sh '''
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
-                    '''
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
+                    script {
+                        sh '''
+                        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                        '''
+                    }
                 }
             }
         }
@@ -72,10 +66,10 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    sh '''
-                    docker push ${ECR_REPO}:${IMAGE_TAG}
-                    docker push ${ECR_REPO}:latest
-                    '''
+                    docker.withRegistry("https://${env.ECR_REPO}", 'aws-credentials-id') {
+                        dockerImage.push("${env.IMAGE_TAG}")
+                        dockerImage.push("latest") // Optionally push the 'latest' tag
+                    }
                 }
             }
         }
