@@ -8,7 +8,7 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
-        IMAGE_TAG = "${env.BUILD_ID}"
+        IMAGE_TAG = "${env.BUILD_ID}" // Use Jenkins build ID for tagging
     }
 
     stages {
@@ -52,12 +52,6 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) {
                     script {
                         sh '''
-                        echo "AWS CLI version:"
-                        aws --version
-
-                        echo "Docker version:"
-                        docker --version
-
                         echo "Fetching ECR login password:"
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
                         '''
