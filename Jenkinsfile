@@ -42,7 +42,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
                 }
             }
         }
@@ -63,9 +63,9 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${env.ECR_REPO}", 'AWS Credentials') {
+                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') {
                         echo "Pushing Docker image to ECR"
-                        dockerImage.push("${env.IMAGE_TAG}")
+                        dockerImage.push("${IMAGE_TAG}")
                         dockerImage.push("latest")
                     }
                 }
@@ -93,7 +93,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    git config user.email "jenkins@example.com"
+                    git config user.email "snehavardhan1996@gmail.com"
                     git config user.name "Jenkins"
                     git add .
                     git commit -m "Automated version update to ${IMAGE_TAG}"
