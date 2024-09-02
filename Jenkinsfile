@@ -24,8 +24,15 @@ pipeline {
 
         stage('Verify Files') {
             steps {
-                // List directory contents to verify presence of pom.xml
+                // List directory contents to verify presence of pom.xml and Dockerfile
                 sh 'ls -la /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'
+            }
+        }
+
+        stage('Clean Target Directory') {
+            steps {
+                // Manually delete the target directory to avoid locked file issues
+                sh 'rm -rf /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/target'
             }
         }
 
@@ -39,7 +46,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}")
+                    dockerImage = docker.build("${env.ECR_REPO}:${env.IMAGE_TAG}", "/var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR")
                 }
             }
         }
