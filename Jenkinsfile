@@ -63,15 +63,6 @@ pipeline {
             }
         }
 
-        stage('Verify kubectl Installation') {
-            steps {
-                sh '''
-                echo "Verifying kubectl installation:"
-                kubectl version --client
-                '''
-            }
-        }
-
         stage('Deploy to EKS') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) {
@@ -82,7 +73,7 @@ pipeline {
                         aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
                         echo "Applying Kubernetes deployment:"
-                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/k8s/deployment.yaml
 
                         echo "Checking rollout status:"
                         kubectl rollout status deployment/my-app
@@ -97,7 +88,7 @@ pipeline {
                 script {
                     sh '''
                     git config user.email "snehavardhan1996@gmail.com"
-                    git config user.name "snehavardhandudaka"
+                    git config user.name "Jenkins"
                     git add .
                     git commit -m "Automated version update to ${IMAGE_TAG}"
                     git push origin main
