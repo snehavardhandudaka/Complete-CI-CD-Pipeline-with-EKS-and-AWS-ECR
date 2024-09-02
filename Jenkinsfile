@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.7'
+        maven 'Maven 3.8.7' // Ensure this Maven version is configured in Jenkins
     }
 
     environment {
@@ -15,26 +15,26 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id' // Update with your Git credentials ID
-                sh 'ls -la'
+                sh 'ls -la' // Verify the files in the workspace
             }
         }
 
         stage('Verify Files') {
             steps {
-                sh 'ls -la'
+                sh 'ls -la' // Additional file verification
             }
         }
 
         stage('Pre-clean Workspace') {
             steps {
-                sh 'rm -rf target'
+                sh 'rm -rf target' // Clean up old build artifacts
             }
         }
 
         stage('Build Maven Project') {
             steps {
                 dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
-                    sh 'mvn clean install'
+                    sh 'mvn clean install' // Build the Maven project
                 }
             }
         }
@@ -42,7 +42,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') // Build the Docker image
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
@@ -68,10 +68,10 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') { // Update with your AWS credentials ID
+                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') { // Use AWS credentials for Docker registry
                         echo "Pushing Docker image to ECR"
-                        dockerImage.push("${IMAGE_TAG}")
-                        dockerImage.push("latest")
+                        dockerImage.push("${IMAGE_TAG}") // Push the Docker image with the build ID tag
+                        dockerImage.push("latest") // Push the Docker image with the latest tag
                     }
                 }
             }
