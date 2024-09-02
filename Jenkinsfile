@@ -29,6 +29,13 @@ pipeline {
             }
         }
 
+        stage('Pre-clean Workspace') {
+            steps {
+                // Manually clean the target directory to avoid issues with Maven's clean phase
+                sh 'rm -rf /var/lib/jenkins/workspace/java-app-pipeline/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/target'
+            }
+        }
+
         stage('Build Maven Project') {
             steps {
                 // Ensure Maven runs in the directory with the pom.xml file
