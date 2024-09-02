@@ -2,47 +2,29 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.7' // Ensure this Maven version is configured in Jenkins
+        maven 'Maven 3.8.7'
     }
 
     environment {
-        AWS_REGION = 'us-east-2' // AWS region
-        ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo' // ECR repository URI
-        IMAGE_TAG = "${env.BUILD_ID}" // Jenkins build ID for tagging
+        AWS_REGION = 'us-east-2'
+        ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
+        IMAGE_TAG = "${env.BUILD_ID}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id' // Git credentials ID
-                sh 'ls -la' // Verify the files in the workspace
+                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                sh 'ls -la'
             }
         }
 
-        stage('Verify Files') {
-            steps {
-                sh 'ls -la' // Additional file verification
-            }
-        }
-
-        stage('Pre-clean Workspace') {
-            steps {
-                sh 'rm -rf target' // Clean up old build artifacts
-            }
-        }
-
-        stage('Build Maven Project') {
-            steps {
-                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
-                    sh 'mvn clean install' // Build the Maven project
-                }
-            }
-        }
+        // Other stages...
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') // Build Docker image
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
@@ -50,7 +32,7 @@ pipeline {
 
         stage('Authenticate Docker to AWS ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) { // AWS credentials ID
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS Credentials']]) {
                     script {
                         sh '''
                         echo "Fetching ECR login password:"
@@ -68,10 +50,16 @@ pipeline {
         stage('Push to AWS ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') { // Use AWS credentials for Docker registry
+                    docker.withRegistry("https://${ECR_REPO}", 'AWS Credentials') {
                         echo "Pushing Docker image to ECR"
-                        dockerImage.push("${IMAGE_TAG}") // Push the Docker image with the build ID tag
-                        dockerImage.push("latest") // Push the Docker image with the latest tag
+                        sh 'docker images' // Print Docker images
+                        try {
+                            dockerImage.push("${IMAGE_TAG}")
+                            dockerImage.push("latest")
+                        } catch (Exception e) {
+                            echo "Failed to push Docker image: ${e.message}"
+                            error("Push to ECR failed")
+                        }
                     }
                 }
             }
@@ -81,8 +69,9 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    set -e
                     echo "Updating kubeconfig for EKS cluster:"
-                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster // Update with your EKS cluster name
+                    aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
                     echo "Applying Kubernetes deployment:"
                     kubectl apply -f k8s/deployment.yaml
@@ -112,9 +101,11 @@ pipeline {
     post {
         success {
             echo 'Pipeline completed successfully.'
+            // Add notification step here
         }
         failure {
             echo 'Pipeline failed. Please check the detailed logs above for more information.'
+            // Add notification step here
         }
     }
 }
