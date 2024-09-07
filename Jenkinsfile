@@ -10,13 +10,13 @@ pipeline {
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
         IMAGE_TAG = "${env.BUILD_ID}"
         DOCKER_BUILDKIT = '1' // Enable BuildKit
-        git-credentials-id = 'snehavardhandudaka'
+        
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'snehavardhandudaka'
                 sh 'pwd'  // Print working directory
                 sh 'ls -l' // List files to ensure Dockerfile is present
             }
