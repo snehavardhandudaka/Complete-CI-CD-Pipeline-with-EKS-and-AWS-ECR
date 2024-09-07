@@ -14,7 +14,8 @@
     Linux: As the underlying operating system for all services.
     
     Key Features of the Project:
-    Private AWS ECR Repository: Created and integrated a private Docker repository on AWS ECR for securely storing Docker images.
+    Private AWS ECR Repository: Created and integrated a private Docker repository 
+    on AWS ECR for securely storing Docker images.
 
     Jenkins Pipeline: Configured a Jenkins pipeline with the following stages:
     Checkout: Cloning the project code from a Git repository.
