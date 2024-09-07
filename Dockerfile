@@ -5,7 +5,15 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # Copy the JAR file from the host to the container
+<<<<<<< HEAD
 COPY target/my-java-app.jar /app/my-java-app.jar
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "my-java-app.jar"]
+=======
+COPY target/my-java-app-1.0-SNAPSHOT.jar /app/my-java-app-1.0.jar
+
+# Run the JAR file
+ENTRYPOINT ["java", "-jar", "my-java-app-1.0.jar"]
+
+>>>>>>> 5736768 (add)
