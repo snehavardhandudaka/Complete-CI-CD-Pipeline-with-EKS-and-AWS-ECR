@@ -9,13 +9,13 @@ pipeline {
         AWS_REGION = 'us-east-2'
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
         IMAGE_TAG = "${env.BUILD_ID}"
+        DOCKER_BUILDKIT = '1' // Enable BuildKit
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                  // Check the specific directory
             }
         }
 
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Ensure Dockerfile is in the root directory or update the path as needed
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '.')
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f Dockerfile .')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
