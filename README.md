@@ -1,40 +1,47 @@
-<<<<<<< HEAD
-# Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR
-=======
-# Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR
+What I Built:
+I built a complete CI/CD pipeline for deploying a Java Spring Boot application on a Kubernetes (EKS) cluster using AWS services like ECR (Elastic Container Registry) and Jenkins. The pipeline automates the process of building, testing, and deploying the application to a production-like environment, ensuring seamless integration and continuous delivery.
 
-This project is about setting up a complete automated pipeline that takes a Java application, builds it, packages it into a Docker container, and then deploys it to a Kubernetes cluster on AWS. All of this is managed through Jenkins, which automates the entire process.
+Technologies Used:
+Kubernetes (EKS): To manage and orchestrate containerized applications.
+AWS ECR: For storing Docker images in a private registry.
+Jenkins: For automating the CI/CD pipeline.
+Docker: To containerize the Java Spring Boot application.
+Java: The application backend is built using Spring Boot.
+Maven: For dependency management and building the Java application.
+Git: To version control the codebase.
+Linux: As the underlying operating system for all services.
+Key Features of the Project:
+Private AWS ECR Repository: Created and integrated a private Docker repository on AWS ECR for securely storing Docker images.
 
-1. Technologies used:
-   Kubernetes, Jenkins, AWS EKS, AWS ECR, Java, Maven, Linux, Docker, Git
-2. What I Built:
-   Private Docker Repository on AWS ECR:
-   I set up a private repository on AWS where the Docker images (the packaged versions of our application) are stored 
-   securely.
-3. Automated CI/CD Pipeline with Jenkins:
-    The pipeline automatically Pulls the latest code from the Git repository, and Builds the Java application using Maven.
-    and then Packages it into a Docker image.Then pushes that image to the AWS ECR repository. Deploys the new version of 
-    the application to a Kubernetes cluster (EKS) on AWS then update the version in the Git repository to keep track oF 
-    what’s deployed.
-4. Deployment to Kubernetes (EKS):
-   I configured the pipeline to deploy the application to an AWS-managed Kubernetes cluster. This ensures that the latest 
-   version is always running in a scalable and secure environment.
-   * What I Learned:
-     Automating the Deployment Process:
-     I learned how to fully automate the process of taking code, turning it into a running application, and deploying it to 
-     a cloud environment with minimal manual intervention.
-   * Managing Docker Images with AWS ECR:
-     I gained experience in using AWS ECR to store and manage Docker images, including handling different versions of the 
-     application.
-   * Working with Kubernetes on AWS:
-     I learned how to deploy and manage applications on a Kubernetes cluster, specifically using AWS’s EKS service. This 
-     included setting up permissions and ensuring secure access to the cluster.
-   * Building and Configuring Jenkins Pipelines:
-     I improved my skills in setting up Jenkins to automate tasks, including handling builds, running tests, and deploying
-     applications.
-5. Importance of Automation and Version Control:
-   I saw firsthand how automation makes deployment faster and more reliable, and how version control helps keep everything 
-   organized and consistent.
+Jenkins Pipeline: Configured a Jenkins pipeline with the following stages:
 
-This project is important because it shows how to use modern tools and practices to automate the entire process of getting software from code to production. It makes the deployment process faster, more reliable, and easier to manage, which is crucial for delivering high-quality software efficiently.
->>>>>>> f9504c34569526a1f6eff09023a2957314bc64b7
+Checkout: Cloning the project code from a Git repository.
+Build: Compiling and packaging the Java Spring Boot application using Maven.
+Build Docker Image: Containerizing the application by creating a Docker image using a Dockerfile.
+Push to AWS ECR: Authenticating with AWS and pushing the built Docker image to a private AWS ECR repository.
+Deploy to EKS: Deploying the new Docker image to a Kubernetes (EKS) cluster, applying the changes using kubectl.
+Commit Version Update: Committing the updated version information to the Git repository.
+Kubernetes Deployment: Managed application deployment to the Kubernetes cluster using a deployment configuration (deployment.yaml) that specifies the application, number of replicas, and update strategy.
+
+What I Learned:
+CI/CD Automation:
+
+Gained in-depth experience in automating the build, test, dockerize, and deployment processes using Jenkins.
+Learned how to implement a multi-stage pipeline in Jenkins, with automatic rollback in case of failure.
+Docker & Containerization:
+
+Mastered containerizing Java applications with Docker.
+Learned to work with AWS ECR as a private Docker registry and manage Docker image tags and versions.
+Kubernetes Orchestration:
+
+Learned how to deploy, scale, and manage applications using AWS EKS (Elastic Kubernetes Service).
+Understood Kubernetes resource management with deployments, services, and rollouts.
+AWS Integration:
+
+Deepened knowledge of AWS IAM roles for securing communication between AWS services (ECR, EKS, Jenkins).
+Improved understanding of AWS CLI to authenticate and interact with AWS ECR and EKS within a CI/CD pipeline.
+Infrastructure as Code (IaC):
+
+Gained experience in writing Kubernetes deployment manifests (.yaml) and integrating them into an automated pipeline.
+Project Summary:
+This project helped me build a fully automated, scalable, and production-ready deployment pipeline using industry-standard tools and technologies like Jenkins, Docker, and Kubernetes. It also enhanced my understanding of CI/CD practices, container orchestration, and cloud-native deployments using AWS services.
