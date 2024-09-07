@@ -84,6 +84,9 @@ pipeline {
                         echo "Updating kubeconfig for EKS cluster:"
                         aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
+                        echo "Listing files in k8s directory:"
+                        ls -al k8s
+
                         echo "Applying Kubernetes deployment:"
                         kubectl apply -f k8s/deployment.yaml
 
