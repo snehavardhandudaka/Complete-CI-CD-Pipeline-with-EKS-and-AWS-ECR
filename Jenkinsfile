@@ -17,7 +17,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'snehavardhandudaka'
                 sh 'pwd'  // Print working directory
-                sh 'ls -l' // List files to ensure Dockerfile is present
+                sh 'ls -al' // List files to ensure Dockerfile and k8s directory are present
             }
         }
 
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Ensure Dockerfile is in the 'my-java-app' directory
-                    sh 'ls -l my-java-app'  // Verify Dockerfile location
+                    sh 'ls -al my-java-app'  // Verify Dockerfile location
                     sh 'cat my-java-app/Dockerfile'  // Print Dockerfile content
 
                     // Build Docker image with correct path to Dockerfile and context
@@ -84,7 +84,10 @@ pipeline {
                         echo "Updating kubeconfig for EKS cluster:"
                         aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
-                        echo "Listing files in k8s directory:"
+                        echo "Current working directory:"
+                        pwd
+
+                        echo "Listing files in the k8s directory:"
                         ls -al k8s
 
                         echo "Applying Kubernetes deployment:"
