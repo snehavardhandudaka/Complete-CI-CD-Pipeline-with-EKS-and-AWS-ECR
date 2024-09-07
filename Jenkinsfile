@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Update this to match the name configured in Jenkins
+        maven 'Maven 3.8.7'
     }
 
     environment {
@@ -15,16 +15,16 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                sh 'ls -la'
+                sh 'ls -la'  // List all files and directories in the workspace
+                sh 'ls -la Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'  // Check the specific directory
             }
         }
-
-        // Other stages...
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", 'Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR')
+                    // Ensure Dockerfile is in the root directory or update the path as needed
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '.')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
