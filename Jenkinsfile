@@ -15,8 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                sh 'ls -la'  // List all files and directories in the workspace
-                sh 'ls -la Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR'  // Check the specific directory
+                  // Check the specific directory
             }
         }
 
