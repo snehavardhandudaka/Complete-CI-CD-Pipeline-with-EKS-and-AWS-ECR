@@ -53,7 +53,6 @@ pipeline {
                 script {
                     sh '''
                     echo "Tagging Docker image:"
-                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:${IMAGE_TAG}
                     docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:latest
 
                     echo "Pushing Docker image to ECR:"
@@ -91,8 +90,8 @@ pipeline {
                     git config user.email "snehavardhan1996@gmail.com"
                     git config user.name "snehavardhandudaka"
                     git add .
-                    git commit -m "Automated version update to ${IMAGE_TAG}"
-                    git push origin main
+                    git commit -m "Automated version update to ${IMAGE_TAG}" || echo "No changes to commit"
+                    git push origin main || echo "Failed to push changes to origin"
                     '''
                 }
             }
