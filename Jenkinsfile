@@ -32,8 +32,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Ensure Dockerfile is in the root directory or specify the correct path
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f Dockerfile .')
+                    // Ensure Dockerfile is in the 'my-java-app' directory
+                    sh 'ls -l my-java-app'  // Verify Dockerfile location
+                    sh 'cat my-java-app/Dockerfile'  // Print Dockerfile content
+
+                    // Build Docker image with correct path to Dockerfile and context
+                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f my-java-app/Dockerfile my-java-app')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
