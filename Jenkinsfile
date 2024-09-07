@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:20.10.7-dind'
+            args '--privileged'
+        }
+    }
 
     tools {
         maven 'Maven'
@@ -19,13 +24,22 @@ pipeline {
             }
         }
 
+        stage('Setup Docker Buildx') {
+            steps {
+                script {
+                    sh '''
+                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                    docker buildx create --name mybuilder --use
+                    docker buildx inspect --bootstrap
+                    '''
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     // Ensure Dockerfile is in the root directory or update the path as needed
-                    sh 'docker buildx create --name mybuilder || true'
-                    sh 'docker buildx use mybuilder'
-                    sh 'docker buildx inspect --bootstrap'
                     dockerImage = sh(script: "docker buildx build --platform linux/amd64 -t ${ECR_REPO}:${IMAGE_TAG} -f Dockerfile . --load", returnStdout: true).trim()
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
