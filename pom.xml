@@ -78,18 +78,6 @@
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
-        <repository>
-            <id>logstash-repo</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <url>https://repo.spring.io/snapshot</url>
-        </repository>
     </repositories>
 
     <!-- Build Configuration -->
@@ -122,7 +110,6 @@
                     <includes>
                         <include>**/*Tests.java</include>
                         <include>**/*Test.java</include>
-                        <include>**/*TestCase.java</include>
                     </includes>
                 </configuration>
             </plugin>
