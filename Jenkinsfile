@@ -16,13 +16,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
+                sh 'ls -l' // List files to verify Dockerfile is present
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Ensure Dockerfile is in the root directory or update the path as needed
+                    // Ensure Dockerfile is in the root directory
                     dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f Dockerfile .')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
@@ -72,7 +73,7 @@ pipeline {
                         aws eks --region ${AWS_REGION} update-kubeconfig --name my-eks-cluster
 
                         echo "Applying Kubernetes deployment:"
-                        kubectl apply -f Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR/k8s/deployment.yaml
+                        kubectl apply -f k8s/deployment.yaml
 
                         echo "Checking rollout status:"
                         kubectl rollout status deployment/my-app
