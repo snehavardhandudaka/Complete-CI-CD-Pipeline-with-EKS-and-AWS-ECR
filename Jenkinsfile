@@ -23,7 +23,10 @@ pipeline {
             steps {
                 script {
                     // Ensure Dockerfile is in the root directory or update the path as needed
-                    dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f Dockerfile .')
+                    sh 'docker buildx create --name mybuilder || true'
+                    sh 'docker buildx use mybuilder'
+                    sh 'docker buildx inspect --bootstrap'
+                    dockerImage = sh(script: "docker buildx build --platform linux/amd64 -t ${ECR_REPO}:${IMAGE_TAG} -f Dockerfile . --load", returnStdout: true).trim()
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
