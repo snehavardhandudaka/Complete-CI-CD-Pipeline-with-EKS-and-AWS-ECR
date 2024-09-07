@@ -23,7 +23,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir('Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR') {
+                 {
                     sh 'mvn clean package'
                 }
             }
