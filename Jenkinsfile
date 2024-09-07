@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Ensure Dockerfile is in the 'my-java-app' directory
-                    sh 'ls -al my-java-app'  // Verify Dockerfile location
+                    sh 'ls -l my-java-app'  // Verify Dockerfile location
                     sh 'cat my-java-app/Dockerfile'  // Print Dockerfile content
 
                     // Build Docker image with correct path to Dockerfile and context
@@ -87,11 +87,11 @@ pipeline {
                         echo "Current working directory:"
                         pwd
 
-                        echo "Listing files in the k8s directory:"
-                        ls -al k8s
+                        echo "Listing files in k8s directory:"
+                        ls -al my-java-app/k8s
 
                         echo "Applying Kubernetes deployment:"
-                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f my-java-app/k8s/deployment.yaml
 
                         echo "Checking rollout status:"
                         kubectl rollout status deployment/my-app
