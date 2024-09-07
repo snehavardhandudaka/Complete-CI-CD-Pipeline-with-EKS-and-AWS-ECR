@@ -16,14 +16,15 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/snehavardhandudaka/Complete-CI-CD-Pipeline-with-EKS-and-AWS-ECR.git', credentialsId: 'git-credentials-id'
-                sh 'ls -l' // List files to verify Dockerfile is present
+                sh 'pwd'  // Print working directory
+                sh 'ls -l' // List files to ensure Dockerfile is present
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Ensure Dockerfile is in the root directory
+                    // Ensure Dockerfile is in the root directory or specify the correct path
                     dockerImage = docker.build("${ECR_REPO}:${IMAGE_TAG}", '-f Dockerfile .')
                     echo "Built Docker image: ${ECR_REPO}:${IMAGE_TAG}"
                 }
@@ -101,11 +102,9 @@ pipeline {
     post {
         success {
             echo 'Pipeline completed successfully.'
-            // Add notification step here
         }
         failure {
             echo 'Pipeline failed. Please check the detailed logs above for more information.'
-            // Add notification step here
         }
     }
 }
