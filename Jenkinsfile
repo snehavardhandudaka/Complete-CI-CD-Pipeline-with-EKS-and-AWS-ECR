@@ -1,4 +1,4 @@
-vardhpipeline {
+pipeline {
     agent any
 
     tools {
