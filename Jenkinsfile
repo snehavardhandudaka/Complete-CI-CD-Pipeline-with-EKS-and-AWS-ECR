@@ -23,6 +23,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                dir('my-java-app')
                 sh 'mvn clean install'
             }
         }
