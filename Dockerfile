@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the JAR file from the host to the container
 
-COPY 761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo.jar /app/my-java-app-1.0.jar
+COPY my-java-app-1.0-SNAPSHOT.jar /app/my-java-app-1.0.jar
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "my-java-app-1.0.jar"]
