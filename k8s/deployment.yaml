@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: default
+  labels:
+    app: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: 761018874575.dkr.ecr.us-east-2.amazonaws.com/my-eks-cluster:${IMAGE_TAG}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: DB_URL
+          value: "jdbc:mysql://my-database-host:3306/mydatabase"
+        - name: DB_USER
+          value: "myuser"
+        - name: DB_PASSWORD
+          value: "mypassword"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
