@@ -10,6 +10,7 @@ pipeline {
         ECR_REPO = '761018874575.dkr.ecr.us-east-2.amazonaws.com/my-java-app-repo'
         IMAGE_TAG = "${env.BUILD_ID}"
         DOCKER_BUILDKIT = '1' // Enable BuildKit
+        git-credentials-id = 'snehavardhandudaka'
     }
 
     stages {
