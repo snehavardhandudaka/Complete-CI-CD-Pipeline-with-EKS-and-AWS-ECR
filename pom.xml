@@ -17,10 +17,11 @@
 
     <!-- Properties -->
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <spring.boot.version>3.1.0</spring.boot.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
     </properties>
 
     <!-- Dependencies -->
@@ -43,14 +44,30 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.2</version> <!-- Use a version that exists in the repository -->
+            <version>7.2</version>
         </dependency>
 
-        <!-- Testing -->
+        <!-- Spring Boot Starter Test for testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter API for JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter Engine for JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -63,7 +80,7 @@
         </repository>
         <repository>
             <id>logstash-repo</id>
-            <url>https://repo1.maven.org/maven2/</url> <!-- Central Maven Repository -->
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -95,8 +112,21 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
+            <!-- Maven Surefire Plugin for running tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
 </project>
-
